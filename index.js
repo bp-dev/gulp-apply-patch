@@ -1,10 +1,10 @@
 'use strict';
-var gutil = require('gulp-util');
 var through = require('through2');
 var glob = require('glob');
 var diff = require('diff');
 var fs = require('fs');
 var path = require('path');
+var PluginError = require('plugin-error');
 
 var PLUGIN_NAME = "gulp-apply-patch";
 
@@ -32,7 +32,7 @@ module.exports = function (patches, opts) {
     function applyPatch(src,patch,i) {
       var results = diff.applyPatch(src, patch);
       if(results===false) {
-        self.emit('error', new gutil.PluginError(PLUGIN_NAME, "Failed to apply patch "+patch.oldFileName));
+        self.emit('error', new PluginError(PLUGIN_NAME, "Failed to apply patch "+patch.oldFileName));
       }
       return results; 
     }
@@ -43,7 +43,7 @@ module.exports = function (patches, opts) {
 		}
 
 		if (file.isStream()) {
-			cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
+			cb(new PluginError(PLUGIN_NAME, 'Streaming not supported'));
 			return;
 		}
 
@@ -57,7 +57,7 @@ module.exports = function (patches, opts) {
           patchesForFile.reduce(applyPatch, originalContents)
         );
       } catch (err) {
-        this.emit('error', new gutil.PluginError(PLUGIN_NAME, err));
+        this.emit('error', new PluginError(PLUGIN_NAME, err));
       }
     }
 
