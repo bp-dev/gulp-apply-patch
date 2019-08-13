@@ -1,9 +1,8 @@
-var gutil = require("gulp-util");
 var assert = require('assert');
-var util = require("util");
 var path = require("path");
 var stream = require("stream");
 var applyPatch = require("../index.js");
+var Vinyl = require('vinyl');
 
 var patch = `--- folder/test.txt	2016-08-15 12:16:39.000000000 +0300
 +++ folder/test.txt	2016-08-15 12:16:11.000000000 +0300
@@ -44,7 +43,7 @@ describe('gulp-apply-patch', function() {
                       "+runs over the\r\n"+
                       " lazy dog.\r\n";
       var patcher = applyPatch([Buffer.from(crlfPatch)],{ replaceCRLF: true });
-      patcher.write(new gutil.File({
+      patcher.write(new Vinyl({
         base: "",
         path: "folder/test.txt",
         contents: Buffer.from(crlfInput)
@@ -59,7 +58,7 @@ describe('gulp-apply-patch', function() {
   describe('when names match', function() {
     it('should apply patch', function(done) {
       var patcher = applyPatch([Buffer.from(patch)]);
-      patcher.write(new gutil.File({
+      patcher.write(new Vinyl({
         base: "",
         path: "folder/test.txt",
         contents: Buffer.from(input)
@@ -71,7 +70,7 @@ describe('gulp-apply-patch', function() {
     });
     it('should apply many patches', function(done) {
       var patcher = applyPatch([Buffer.from(patch), Buffer.from(chainedPatch)]);
-      patcher.write(new gutil.File({
+      patcher.write(new Vinyl({
         base: "",
         path: "folder/test.txt",
         contents: Buffer.from(input)
@@ -84,7 +83,7 @@ describe('gulp-apply-patch', function() {
   });
 
   describe('when names dont match', function() {
-    var fakeFile = new gutil.File({
+    var fakeFile = new Vinyl({
       base: "",
       path: "folder/not_test.txt",
       contents: Buffer.from(input)
